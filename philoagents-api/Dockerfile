@@ -15,21 +15,39 @@
 # COPY tools tools/
 
 # CMD ["/app/.venv/bin/fastapi", "run", "philoagents/infrastructure/api.py", "--port", "8000", "--host", "0.0.0.0"]
+# FROM python:3.11-slim
+
+# # Install uv (dependency manager)
+# COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+
+# # Set workdir
+# WORKDIR /app
+
+# # Install app dependencies
+# COPY uv.lock pyproject.toml README.md ./
+# RUN uv sync --frozen --no-cache
+
+# # Copy the application code (for prod only — overridden in dev with volumes)
+# COPY src/philoagents philoagents/
+# COPY tools tools/
+
+# # Default to production command
+# CMD ["uvicorn", "philoagents.infrastructure.api:app", "--host", "0.0.0.0", "--port", "8000"]
 FROM python:3.11-slim
 
 # Install uv (dependency manager)
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
-# Set workdir
 WORKDIR /app
 
-# Install app dependencies
 COPY uv.lock pyproject.toml README.md ./
 RUN uv sync --frozen --no-cache
 
-# Copy the application code (for prod only — overridden in dev with volumes)
 COPY src/philoagents philoagents/
 COPY tools tools/
 
-# Default to production command
+# 🔍 Debug: list files to verify COPY worked
+RUN echo "🧾 Directory structure:" && ls -R /app
+
+# ✅ Final CMD
 CMD ["uvicorn", "philoagents.infrastructure.api:app", "--host", "0.0.0.0", "--port", "8000"]
