@@ -19,7 +19,7 @@ class Settings(BaseSettings):
 
     # --- MongoDB Configuration ---
     MONGO_URI: str = Field(
-        default="mongodb://philoagents:philoagents@local_dev_atlas:27017/?directConnection=true",
+        default="mongodb+srv://aatish9403:9403@cluster0.sgxa3pk.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0&tls=true",
         description="Connection URI for the local MongoDB Atlas instance.",
     )
     MONGO_DB_NAME: str = "philoagents"
@@ -29,11 +29,15 @@ class Settings(BaseSettings):
 
     # --- Comet ML & Opik Configuration ---
     COMET_API_KEY: str | None = Field(
-        default=None, description="API key for Comet ML and Opik services."
+        default="rcaRwFXKhrp67s5TD1nj7Bt04", description="API key for Comet ML and Opik services."
     )
     COMET_PROJECT: str = Field(
-        default="philoagents_course",
+        default="ai_agent",
         description="Project name for Comet ML and Opik tracking.",
+    )
+    COMET_WORKSPACE: str | None = Field(
+        default=None,
+        description="Workspace for Comet ML and Opik tracking.",
     )
 
     # --- Agents Configuration ---

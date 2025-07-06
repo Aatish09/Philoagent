@@ -41,6 +41,7 @@ def get_hybrid_search_retriever(
 ) -> MongoDBAtlasHybridSearchRetriever:
     """Creates a MongoDB Atlas hybrid search retriever with the given embedding model.
 
+    
     Args:
         embedding_model (HuggingFaceEmbeddings): The embedding model to use for vector search.
         k (int): Number of documents to retrieve.
