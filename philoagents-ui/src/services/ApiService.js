@@ -1,14 +1,7 @@
 class ApiService {
   constructor() {
-    const isHttps = window.location.protocol === 'https:';
-    
-    if (isHttps) {
-      console.log('Using GitHub Codespaces');
-      const currentHostname = window.location.hostname;
-      this.apiUrl = `https://${currentHostname.replace('8080', '8000')}`;
-    } else {
-      this.apiUrl = 'http://localhost:8000';
-    }
+    // ✅ Use your actual backend Render URL here
+    this.apiUrl = 'https://philoagents-api.onrender.com';
   }
 
   async request(endpoint, method, data) {
@@ -22,11 +15,11 @@ class ApiService {
     };
 
     const response = await fetch(url, options);
-    
+
     if (!response.ok) {
       throw new Error(`API error: ${response.status} ${response.statusText}`);
     }
-    
+
     return response.json();
   }
 
@@ -34,9 +27,9 @@ class ApiService {
     try {
       const data = await this.request('/chat', 'POST', {
         message,
-        philosopher_id: philosopher.id
+        philosopher_id: philosopher.id,
       });
-      
+
       return data.response;
     } catch (error) {
       console.error('Error sending message to API:', error);
@@ -53,14 +46,14 @@ class ApiService {
       const response = await fetch(`${this.apiUrl}/reset-memory`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
-        }
+          'Content-Type': 'application/json',
+        },
       });
-      
+
       if (!response.ok) {
         throw new Error('Failed to reset memory');
       }
-      
+
       return await response.json();
     } catch (error) {
       console.error('Error resetting memory:', error);
@@ -69,4 +62,4 @@ class ApiService {
   }
 }
 
-export default new ApiService(); 
+export default new ApiService();
