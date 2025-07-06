@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <div align="center">
   <h1>PhiloAgents Course</h1>
   <h3>Learn how to build an AI-powered game simulation engine to impersonate popular philosophers.</h3>
@@ -381,3 +382,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
     <img src="https://img.shields.io/static/v1?label&logo=substack&message=Subscribe%20Now&style=for-the-badge&color=black&scale=2" alt="Subscribe Now" height="40">
   </a>
 </p>
+=======
+# Philoagent
+>>>>>>> 695d7721f2882f64edcbe918e454130e6219027f
