@@ -52,27 +52,35 @@
 # # ✅ Final CMD
 # CMD ["uvicorn", "philoagents.infrastructure.api:app", "--host", "0.0.0.0", "--port", "8000"]
 # Use lightweight base image
+# Use lightweight Python base
 FROM python:3.11-slim-bookworm
 
-# Install system dependencies first
-RUN apt-get update && apt-get install -y --no-install-recommends gcc g++ \
+# Set environment variables
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PORT=8080 \
+    OMP_NUM_THREADS=1
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Install only essential Python dependencies
+# Install Python dependencies
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt \
-    && pip uninstall -y torch torchvision torchaudio \  # Remove if not using locally
-    && pip install --no-cache-dir torch==2.6.0+cpu --index-url https://download.pytorch.org/whl/cpu
+RUN pip install --no-cache-dir -r requirements.txt && \
+    pip uninstall -y torch torchvision torchaudio && \
+    pip install --no-cache-dir torch==2.6.0+cpu --index-url https://download.pytorch.org/whl/cpu
 
-# Copy application code
+# Copy application
 COPY . .
 
-# Set memory limits
-ENV PYTHONUNBUFFERED=1
-ENV OMP_NUM_THREADS=1
-ENV TOKENIZERS_PARALLELISM=false
+# Expose port
+EXPOSE 8080
 
 # Start command
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080", "--workers", "1"]
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "10000", "--workers", "1"]
 ###############################################################################
 
