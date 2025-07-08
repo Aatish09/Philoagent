@@ -53,58 +53,58 @@
 # CMD ["uvicorn", "philoagents.infrastructure.api:app", "--host", "0.0.0.0", "--port", "8000"]
 # Use lightweight base image
 # Use lightweight Python base
-FROM python:3.11-slim-bookworm
+# FROM python:3.11-slim-bookworm
 
-# Set environment variables
-ENV PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1 \
-    PORT=8080 \
-    OMP_NUM_THREADS=1
+# # Set environment variables
+# ENV PYTHONUNBUFFERED=1 \
+#     PYTHONDONTWRITEBYTECODE=1 \
+#     PORT=8080 \
+#     OMP_NUM_THREADS=1
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
+# # Install system dependencies
+# RUN apt-get update && apt-get install -y --no-install-recommends \
+#     build-essential \
+#     curl \
+#     && rm -rf /var/lib/apt/lists/*
 
-# Install Python dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt && \
-    pip uninstall -y torch torchvision torchaudio && \
-    pip install --no-cache-dir torch==2.6.0+cpu --index-url https://download.pytorch.org/whl/cpu
+# # Install Python dependencies
+# COPY requirements.txt .
+# RUN pip install --no-cache-dir -r requirements.txt && \
+#     pip uninstall -y torch torchvision torchaudio && \
+#     pip install --no-cache-dir torch==2.6.0+cpu --index-url https://download.pytorch.org/whl/cpu
 
-# Copy application
-COPY . .
+# # Copy application
+# COPY . .
 
-# Expose port
-EXPOSE 8080
+# # Expose port
+# EXPOSE 8080
 
-# Start command
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080", "--workers", "1"]
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "10000", "--workers", "1"]
+# # Start command
+# CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080", "--workers", "1"]
+# CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "10000", "--workers", "1"]
 ###############################################################################
 
-# FROM python:3.11-slim
+FROM python:3.11-slim
 
-# # Install uv (dependency manager)
-# COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+# Install uv (dependency manager)
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
-# WORKDIR /app
+WORKDIR /app
 
-# # Install dependencies
-# COPY uv.lock pyproject.toml README.md ./
-# RUN uv sync --frozen --no-cache
+# Install dependencies
+COPY uv.lock pyproject.toml README.md ./
+RUN uv sync --frozen --no-cache
 
-# # Copy code
-# COPY src/philoagents philoagents/
-# COPY tools tools/
+# Copy code
+COPY src/philoagents philoagents/
+COPY tools tools/
 
-# # ✅ Ensure Python can find 'philoagents' as a module
-# ENV PYTHONPATH=/app
+# ✅ Ensure Python can find 'philoagents' as a module
+ENV PYTHONPATH=/app
 
-# EXPOSE 8000
+EXPOSE 8000
 
-# CMD ["uvicorn", "philoagents.infrastructure.api:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "philoagents.infrastructure.api:app", "--host", "0.0.0.0", "--port", "8000"]
 #############################################################################################################
 # FROM python:3.11-slim
 
