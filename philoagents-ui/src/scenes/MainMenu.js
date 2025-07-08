@@ -22,7 +22,7 @@ export class MainMenu extends Scene {
         });
 
         this.createButton(centerX, startY + buttonSpacing * 2, 'Support Philoagents', () => {
-            window.open('https://github.com/neural-maze/philoagents-course', '_blank');
+            window.open('https://github.com/Aatish09/Philoagent.git', '_blank');
         });
     }
 
