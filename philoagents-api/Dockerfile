@@ -48,33 +48,56 @@
 
 # # 🔍 Debug: list files to verify COPY worked
 # RUN echo "🧾 Directory structure:" && ls -R /app
-
+###
 # # ✅ Final CMD
 # CMD ["uvicorn", "philoagents.infrastructure.api:app", "--host", "0.0.0.0", "--port", "8000"]
+# Use lightweight base image
+FROM python:3.11-slim-bookworm
 
+# Install system dependencies first
+RUN apt-get update && apt-get install -y --no-install-recommends gcc g++ \
+    && rm -rf /var/lib/apt/lists/*
 
-FROM python:3.11-slim
+# Install only essential Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt \
+    && pip uninstall -y torch torchvision torchaudio \  # Remove if not using locally
+    && pip install --no-cache-dir torch==2.6.0+cpu --index-url https://download.pytorch.org/whl/cpu
 
-# Install uv (dependency manager)
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+# Copy application code
+COPY . .
 
-WORKDIR /app
+# Set memory limits
+ENV PYTHONUNBUFFERED=1
+ENV OMP_NUM_THREADS=1
+ENV TOKENIZERS_PARALLELISM=false
 
-# Install dependencies
-COPY uv.lock pyproject.toml README.md ./
-RUN uv sync --frozen --no-cache
+# Start command
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "10000", "--workers", "1"]
+###############################################################################
 
-# Copy code
-COPY src/philoagents philoagents/
-COPY tools tools/
+# FROM python:3.11-slim
 
-# ✅ Ensure Python can find 'philoagents' as a module
-ENV PYTHONPATH=/app
+# # Install uv (dependency manager)
+# COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
-EXPOSE 8000
+# WORKDIR /app
 
-CMD ["uvicorn", "philoagents.infrastructure.api:app", "--host", "0.0.0.0", "--port", "8000"]
+# # Install dependencies
+# COPY uv.lock pyproject.toml README.md ./
+# RUN uv sync --frozen --no-cache
 
+# # Copy code
+# COPY src/philoagents philoagents/
+# COPY tools tools/
+
+# # ✅ Ensure Python can find 'philoagents' as a module
+# ENV PYTHONPATH=/app
+
+# EXPOSE 8000
+
+# CMD ["uvicorn", "philoagents.infrastructure.api:app", "--host", "0.0.0.0", "--port", "8000"]
+#############################################################################################################
 # FROM python:3.11-slim
 
 # # Install uv (Python dependency manager)
